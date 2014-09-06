@@ -30,21 +30,31 @@ router.get('/newuser', function(req, res) {
 
 /* POST to Add User Service */
 router.post('/adduser', function(req, res) {
-	var db = req.db;
 
-	var userName = req.body.username;
-	var userEmail = req.body.useremail;
+    // Set our internal DB variable
+    var db = req.db;
 
-	console.log(userName);
-	console.log(userEmail);
+    // Get our form values. These rely on the "name" attributes
+    var userName = req.body.username;
+    var userEmail = req.body.useremail;
 
-	var collection = db.get('usercollection');
+    // Set our collection
+    var collection = db.get('usercollection');
 
     collection.insert({
         "username" : userName,
         "email" : userEmail
     }, function (err, doc) {
-		console.log('error');
+        if (err) {
+            // If it failed, return error
+            res.send("There was a problem adding the information to the database.");
+        }
+        else {
+            // If it worked, set the header so the address bar doesn't still say /adduser
+            res.location("userlist");	//the redirect below already does this?
+            // And forward to success page
+            res.redirect("userlist");
+        }
     });
 });
 
